@@ -131,7 +131,7 @@ func getAllRepos(orgname string) []repoStruct {
 		rs.Name = repo.Name
 
 		//TODO: Make call to Github api with beta header and get the value of protected
-		rs.Protected = getProtectedStatus(repo)
+		rs.Protected = getProtectedStatus(orgname, repo)
 		repos[i] = rs
 
 		// TESTING ONLY - Stop these calls after the first five
@@ -142,9 +142,9 @@ func getAllRepos(orgname string) []repoStruct {
 	return repos
 }
 
-func getProtectedStatus(repo github.Repository) bool {
+func getProtectedStatus(orgname string, repo github.Repository) bool {
 	url := "https://api.github.com/repos/%s/%s/branches/master"
-	fullURL := fmt.Sprintf(url, "AKQASF", *repo.Name)
+	fullURL := fmt.Sprintf(url, orgname, *repo.Name)
 	log.Printf("Connecting to URL: %s", fullURL)
 
 	client := &http.Client{}
