@@ -4,8 +4,8 @@
     "sha": "8c32890e3d1878451077b19444ca491a658cb5f6",
     "commit": {
       "author": {
-        "name": "Paul Dunnavant",
-        "email": "pdunnavant@gmail.com",
+        "name": "Tom Foolery",
+        "email": "test@test.com",
         "date": "2016-06-10T06:30:21Z"
       },
       "committer": {
@@ -13,33 +13,33 @@
         "email": "noreply@github.com",
         "date": "2016-06-10T06:30:21Z"
       },
-      "message": "Fix plugin versions (#78)\n\n* Fix plugin versions to get master back in a solid working state.",
+      "message": "This did stuff.",
       "tree": {
         "sha": "a1f88f1cb284eb2a370c955f4892f1329cf6d90d",
-        "url": "https://api.github.com/repos/AKQASF/audi-jenkins-cookbook/git/trees/a1f88f1cb284eb2a370c955f4892f1329cf6d90d"
+        "url": "https://api.github.com/repos/"
       },
-      "url": "https://api.github.com/repos/AKQASF/audi-jenkins-cookbook/git/commits/8c32890e3d1878451077b19444ca491a658cb5f6",
+      "url": "https://api.github.com/repos/",
       "comment_count": 0
     },
-    "url": "https://api.github.com/repos/AKQASF/audi-jenkins-cookbook/commits/8c32890e3d1878451077b19444ca491a658cb5f6",
-    "html_url": "https://github.com/AKQASF/audi-jenkins-cookbook/commit/8c32890e3d1878451077b19444ca491a658cb5f6",
-    "comments_url": "https://api.github.com/repos/AKQASF/audi-jenkins-cookbook/commits/8c32890e3d1878451077b19444ca491a658cb5f6/comments",
+    "url": "https://api.github.com/repos/",
+    "html_url": "https://github.com/",
+    "comments_url": "https://api.github.com/repos/comments",
     "author": {
-      "login": "pdunnavant",
+      "login": "tfool",
       "id": 782550,
       "avatar_url": "https://avatars.githubusercontent.com/u/782550?v=3",
       "gravatar_id": "",
-      "url": "https://api.github.com/users/pdunnavant",
-      "html_url": "https://github.com/pdunnavant",
-      "followers_url": "https://api.github.com/users/pdunnavant/followers",
-      "following_url": "https://api.github.com/users/pdunnavant/following{/other_user}",
-      "gists_url": "https://api.github.com/users/pdunnavant/gists{/gist_id}",
-      "starred_url": "https://api.github.com/users/pdunnavant/starred{/owner}{/repo}",
-      "subscriptions_url": "https://api.github.com/users/pdunnavant/subscriptions",
-      "organizations_url": "https://api.github.com/users/pdunnavant/orgs",
-      "repos_url": "https://api.github.com/users/pdunnavant/repos",
-      "events_url": "https://api.github.com/users/pdunnavant/events{/privacy}",
-      "received_events_url": "https://api.github.com/users/pdunnavant/received_events",
+      "url": "https://api.github.com/users/tfoolery",
+      "html_url": "https://github.com/tfoolery",
+      "followers_url": "https://api.github.com/users/tfoolery/followers",
+      "following_url": "https://api.github.com/users/tfoolery/following{/other_user}",
+      "gists_url": "https://api.github.com/users/tfoolery/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/tfoolery/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/tfoolery/subscriptions",
+      "organizations_url": "https://api.github.com/users/tfoolery/orgs",
+      "repos_url": "https://api.github.com/users/tfoolery/repos",
+      "events_url": "https://api.github.com/users/tfoolery/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/tfoolery/received_events",
       "type": "User",
       "site_admin": false
     },
@@ -65,14 +65,14 @@
     "parents": [
       {
         "sha": "5a0f64582ab0faf3e5004c637ffefd18cc4f059f",
-        "url": "https://api.github.com/repos/AKQASF/audi-jenkins-cookbook/commits/5a0f64582ab0faf3e5004c637ffefd18cc4f059f",
-        "html_url": "https://github.com/AKQASF/audi-jenkins-cookbook/commit/5a0f64582ab0faf3e5004c637ffefd18cc4f059f"
+        "url": "https://api.github.com/repos/ORGNAME/repo-name/commits/5a0f64582ab0faf3e5004c637ffefd18cc4f059f",
+        "html_url": "https://github.com/ORGNAME/repo-name/commit/5a0f64582ab0faf3e5004c637ffefd18cc4f059f"
       }
     ]
   },
   "_links": {
-    "self": "https://api.github.com/repos/AKQASF/audi-jenkins-cookbook/branches/master",
-    "html": "https://github.com/AKQASF/audi-jenkins-cookbook/tree/master"
+    "self": "https://api.github.com/repos/ORGNAME/repo-name/branches/master",
+    "html": "https://github.com/ORGNAME/repo-name/tree/master"
   },
   "protection": {
     "enabled": true,
