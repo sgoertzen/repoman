@@ -12,9 +12,13 @@ import (
 	"golang.org/x/oauth2"
 )
 
+// Will limit the count of results for testing purposes
+var debug = true
+
 type repoStruct struct {
 	Name      *string
 	Protected bool
+	Contexts  []string
 }
 
 type Branch struct {
@@ -94,8 +98,8 @@ type Branch struct {
 	Protection struct {
 		Enabled              bool `json:"enabled"`
 		RequiredStatusChecks struct {
-			EnforcementLevel string        `json:"enforcement_level"`
-			Contexts         []interface{} `json:"contexts"`
+			EnforcementLevel string   `json:"enforcement_level"`
+			Contexts         []string `json:"contexts"`
 		} `json:"required_status_checks"`
 	} `json:"protection"`
 }
@@ -104,8 +108,14 @@ type Branch struct {
 func getAllRepos(orgname string) []repoStruct {
 	client := getClient()
 
+	var count int
+	if debug {
+		count = 5
+	} else {
+		count = 100
+	}
 	opt := &github.RepositoryListByOrgOptions{
-		ListOptions: github.ListOptions{PerPage: 100},
+		ListOptions: github.ListOptions{PerPage: count},
 	}
 	// get all pages of results
 	var allRepos []github.Repository
@@ -119,8 +129,10 @@ func getAllRepos(orgname string) []repoStruct {
 			break
 		}
 		opt.ListOptions.Page = resp.NextPage
-		// TESTING ONLY - stop after the first call
-		break
+
+		if debug {
+			break
+		}
 	}
 	log.Printf("Found %d repo(s) for the organization %s", len(allRepos), orgname)
 
@@ -129,20 +141,13 @@ func getAllRepos(orgname string) []repoStruct {
 	for i, repo := range allRepos {
 		rs := repoStruct{}
 		rs.Name = repo.Name
-
-		//TODO: Make call to Github api with beta header and get the value of protected
-		rs.Protected = getProtectedStatus(orgname, repo)
+		addProtectedDetails(&rs, orgname, repo)
 		repos[i] = rs
-
-		// TESTING ONLY - Stop these calls after the first five
-		if i > 4 {
-			break
-		}
 	}
 	return repos
 }
 
-func getProtectedStatus(orgname string, repo github.Repository) bool {
+func addProtectedDetails(rs *repoStruct, orgname string, repo github.Repository) {
 	url := "https://api.github.com/repos/%s/%s/branches/master"
 	fullURL := fmt.Sprintf(url, orgname, *repo.Name)
 	log.Printf("Connecting to URL: %s", fullURL)
@@ -163,7 +168,8 @@ func getProtectedStatus(orgname string, repo github.Repository) bool {
 	err = json.Unmarshal(body, &s)
 	check(err)
 
-	return s.Protection.Enabled
+	rs.Protected = s.Protection.Enabled
+	rs.Contexts = s.Protection.RequiredStatusChecks.Contexts
 }
 
 func getClient() *github.Client {
