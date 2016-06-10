@@ -16,9 +16,9 @@ import (
 var debug = true
 
 type repoStruct struct {
-	Name      *string
-	Protected bool
-	Contexts  []string
+	Name                     *string
+	Protected                bool
+	ProtectedWithStatusCheck bool
 }
 
 type Branch struct {
@@ -172,8 +172,13 @@ func parseProtectionDetails(rs *repoStruct, response []byte) {
 	err := json.Unmarshal(response, &s)
 	check(err)
 
-	rs.Protected = s.Protection.Enabled
-	rs.Contexts = s.Protection.RequiredStatusChecks.Contexts
+	rs.Protected = s.Protection.Enabled &&
+		s.Protection.RequiredStatusChecks.EnforcementLevel == "everyone" &&
+		len(s.Protection.RequiredStatusChecks.Contexts) == 0
+
+	rs.ProtectedWithStatusCheck = s.Protection.Enabled &&
+		s.Protection.RequiredStatusChecks.EnforcementLevel == "everyone" &&
+		stringInSlice("build", s.Protection.RequiredStatusChecks.Contexts)
 }
 
 func getClient() *github.Client {
@@ -186,6 +191,15 @@ func getClient() *github.Client {
 	}
 	client := github.NewClient(tc)
 	return client
+}
+
+func stringInSlice(a string, list []string) bool {
+	for _, b := range list {
+		if b == a {
+			return true
+		}
+	}
+	return false
 }
 
 func check(e error) {
