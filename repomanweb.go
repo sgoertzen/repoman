@@ -12,21 +12,22 @@ import (
 type config struct {
 	githubkey    *string
 	organization *string
+	webhookurl   *string
 }
 
-var _config config
+var cfg config
 
 // Program to read in poms and determine
 func main() {
 
-	_config = getConfiguration()
+	cfg = getConfiguration()
 	runServer()
 
 	log.Println("Done")
 }
 
 func showRepos(w http.ResponseWriter, r *http.Request) {
-	repos := getAllRepos(*_config.organization)
+	repos := getAllRepos(*cfg.organization, *cfg.webhookurl)
 	data := map[string]interface{}{
 		"Repos": repos,
 	}
@@ -49,7 +50,7 @@ func handler(w http.ResponseWriter, r *http.Request) {
 
 	switch path {
 	case "api":
-		repos := getAllRepos(*_config.organization)
+		repos := getAllRepos(*cfg.organization, *cfg.webhookurl)
 		w.Header().Set("Content-Type", "application/javascript")
 		json.NewEncoder(w).Encode(repos)
 	case "":
@@ -65,6 +66,7 @@ func getConfiguration() config {
 	config := config{}
 	config.organization = kingpin.Arg("org", "Github organization to analyze for upgrades").Required().String()
 	config.githubkey = kingpin.Arg("githubkey", "Api key for github.").Required().String()
+	config.webhookurl = kingpin.Arg("webhookurl", "URL to use when dealing with web hooks.").Required().String()
 	kingpin.Version("1.0.0")
 	kingpin.CommandLine.VersionFlag.Short('v')
 	kingpin.CommandLine.HelpFlag.Short('?')

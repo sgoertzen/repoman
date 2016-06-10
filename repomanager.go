@@ -19,6 +19,8 @@ type repoStruct struct {
 	Name                     *string
 	Protected                bool
 	ProtectedWithStatusCheck bool
+	CIHooks                  bool
+	CITestHooks              bool
 }
 
 type Branch struct {
@@ -105,7 +107,7 @@ type Branch struct {
 }
 
 // GetAllRepos will return a list of repos for a Github Organization
-func getAllRepos(orgname string) []repoStruct {
+func getAllRepos(orgname string, webhookurl string) []repoStruct {
 	client := getClient()
 
 	var count int
@@ -129,11 +131,11 @@ func getAllRepos(orgname string) []repoStruct {
 			break
 		}
 		opt.ListOptions.Page = resp.NextPage
-
 		if debug {
 			break
 		}
 	}
+
 	log.Printf("Found %d repo(s) for the organization %s", len(allRepos), orgname)
 
 	var repos []repoStruct
@@ -142,6 +144,7 @@ func getAllRepos(orgname string) []repoStruct {
 		rs := repoStruct{}
 		rs.Name = repo.Name
 		addProtectedDetails(&rs, orgname, repo)
+		addHooksDetails(&rs, orgname, repo, webhookurl)
 		repos[i] = rs
 	}
 	return repos
@@ -152,10 +155,10 @@ func addProtectedDetails(rs *repoStruct, orgname string, repo github.Repository)
 	fullURL := fmt.Sprintf(url, orgname, *repo.Name)
 	log.Printf("Connecting to URL: %s", fullURL)
 
-	client := &http.Client{}
 	req, _ := http.NewRequest("GET", fullURL, nil)
-	req.Header.Set("Authorization", "token "+*_config.githubkey)
+	req.Header.Set("Authorization", "token "+*cfg.githubkey)
 	req.Header.Set("accept", "application/vnd.github.loki-preview+json")
+	client := &http.Client{}
 	resp, err := client.Do(req)
 
 	check(err)
@@ -164,7 +167,6 @@ func addProtectedDetails(rs *repoStruct, orgname string, repo github.Repository)
 	body, err := ioutil.ReadAll(resp.Body)
 	check(err)
 	parseProtectionDetails(rs, body)
-
 }
 
 func parseProtectionDetails(rs *repoStruct, response []byte) {
@@ -181,9 +183,23 @@ func parseProtectionDetails(rs *repoStruct, response []byte) {
 		stringInSlice("build", s.Protection.RequiredStatusChecks.Contexts)
 }
 
+func addHooksDetails(rs *repoStruct, orgname string, repo github.Repository, webhookurl string) {
+	client := getClient()
+	hooks, _, err := client.Repositories.ListHooks(orgname, *repo.Name, nil)
+	check(err)
+	parseHookData(rs, hooks, webhookurl)
+}
+
+func parseHookData(rs *repoStruct, hooks []github.Hook, webhookurl string) {
+	// for _, hook := range hooks {
+	// }
+	rs.CIHooks = false
+	rs.CITestHooks = false
+}
+
 func getClient() *github.Client {
 	var tc *http.Client
-	envToken := *_config.githubkey
+	envToken := *cfg.githubkey
 	if len(envToken) > 0 {
 		token := oauth2.Token{AccessToken: envToken}
 		ts := oauth2.StaticTokenSource(&token)

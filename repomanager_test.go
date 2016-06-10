@@ -6,6 +6,7 @@ import (
 	"os"
 	"testing"
 
+	"github.com/google/go-github/github"
 	"github.com/stretchr/testify/assert"
 )
 
@@ -71,6 +72,7 @@ func TestParsePrtectionDetailsNotProtected(t *testing.T) {
 	assert.Equal(t, false, rs.Protected)
 	assert.Equal(t, false, rs.ProtectedWithStatusCheck)
 }
+
 func TestParsePrtectionDetailsNoAdmins(t *testing.T) {
 	// not include admins
 	prot :=
@@ -86,4 +88,70 @@ func TestParsePrtectionDetailsNoAdmins(t *testing.T) {
 
 	assert.Equal(t, false, rs.Protected)
 	assert.Equal(t, false, rs.ProtectedWithStatusCheck)
+}
+
+func TestParseHooksEmpty(t *testing.T) {
+	rs := repoStruct{}
+	var hooks []github.Hook
+	parseHookData(&rs, hooks, "")
+	assert.Equal(t, false, rs.CIHooks)
+	assert.Equal(t, false, rs.CITestHooks)
+}
+
+func TestParseHooksCI(t *testing.T) {
+	url := "https://%s.test.com/"
+	rs := repoStruct{}
+	hooks := []github.Hook{
+		*getProdPushWH(),
+		*getProdPRWH(),
+	}
+
+	parseHookData(&rs, hooks, url)
+
+	assert.Equal(t, true, rs.CIHooks)
+	assert.Equal(t, false, rs.CITestHooks)
+}
+
+func getProdPushWH() *github.Hook {
+	return &github.Hook{
+		Events: []string{"push"},
+		Config: map[string]interface{}{
+			"url":          "https://ci-proxy.test.com/github-webhook/",
+			"content_type": "form",
+			"insecure_ssl": "0",
+		},
+	}
+}
+
+func getProdPRWH() *github.Hook {
+	return &github.Hook{
+		Events: []string{"issue_comment", "pull_request"},
+		Config: map[string]interface{}{
+			"url":          "https://ci-proxy.test.com/ghprbhook/",
+			"content_type": "form",
+			"insecure_ssl": "0",
+		},
+	}
+}
+
+func getTestPushWH() *github.Hook {
+	return &github.Hook{
+		Events: []string{"push"},
+		Config: map[string]interface{}{
+			"url":          "https://ci-test-proxy.test.com/github-webhook/",
+			"content_type": "form",
+			"insecure_ssl": "0",
+		},
+	}
+}
+
+func getTestPRWH() *github.Hook {
+	return &github.Hook{
+		Events: []string{"issue_comment", "pull_request"},
+		Config: map[string]interface{}{
+			"url":          "https://ci-test-proxy.test.com/ghprbhook/",
+			"content_type": "form",
+			"insecure_ssl": "0",
+		},
+	}
 }
