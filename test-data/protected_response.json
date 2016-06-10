@@ -74,13 +74,5 @@
     "self": "https://api.github.com/repos/ORGNAME/repo-name/branches/master",
     "html": "https://github.com/ORGNAME/repo-name/tree/master"
   },
-  "protection": {
-    "enabled": true,
-    "required_status_checks": {
-      "enforcement_level": "everyone",
-      "contexts": [
-        "build"
-      ]
-    }
-  }
+  %s
 }
