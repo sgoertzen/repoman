@@ -4,8 +4,7 @@ go:
 
 install:
   - go get -t ./...
-  - go get github.com/stretchr/testify/assert  # This doesn't pick up the testing dependency as they are tagged (int and end to end)
+  #- go get github.com/stretchr/testify/assert  # This doesn't pick up the testing dependency as they are tagged (int and end to end)
 
 script:
- - go build ./cmd/repoclone/repoclone.go
- - go test -v -tags=integration           # Run integration tests
+ - go build
