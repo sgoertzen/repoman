@@ -1,6 +1,7 @@
 package main
 
 import (
+	"encoding/json"
 	"html/template"
 	"log"
 	"net/http"
@@ -47,8 +48,10 @@ func handler(w http.ResponseWriter, r *http.Request) {
 	path := r.URL.Path[1:]
 
 	switch path {
-	case "about":
-		http.NotFound(w, r)
+	case "api":
+		repos := getAllRepos(*_config.organization)
+		w.Header().Set("Content-Type", "application/javascript")
+		json.NewEncoder(w).Encode(repos)
 	case "":
 		showRepos(w, r)
 	default:
