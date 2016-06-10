@@ -163,9 +163,13 @@ func addProtectedDetails(rs *repoStruct, orgname string, repo github.Repository)
 
 	body, err := ioutil.ReadAll(resp.Body)
 	check(err)
+	parseProtectionDetails(rs, body)
 
+}
+
+func parseProtectionDetails(rs *repoStruct, response []byte) {
 	var s = new(Branch)
-	err = json.Unmarshal(body, &s)
+	err := json.Unmarshal(response, &s)
 	check(err)
 
 	rs.Protected = s.Protection.Enabled
