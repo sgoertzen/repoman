@@ -50,6 +50,7 @@ func getAllRepos(orgname string) []RepoStruct {
 }
 
 func getProtectedStatus(github.Repository) bool {
+	// TODO
 	return false
 }
 
