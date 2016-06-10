@@ -1,17 +1,17 @@
 package main
 
 import (
-	"gopkg.in/alecthomas/kingpin.v2"
 	"html/template"
 	"log"
 	"net/http"
+
+	"gopkg.in/alecthomas/kingpin.v2"
 )
 
 type config struct {
 	githubkey    *string
 	organization *string
 }
-
 
 var _config config
 
@@ -25,7 +25,6 @@ func main() {
 }
 
 func showRepos(w http.ResponseWriter, r *http.Request) {
-	// TODO: Include contents of log file on the main page
 	repos := getAllRepos(*_config.organization)
 	data := map[string]interface{}{
 		"Repos": repos,
