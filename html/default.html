@@ -1,0 +1,25 @@
+<html>
+  <head>
+    <title>Repoman</title>
+  </head>
+  <body>
+    <h1>Repoman - Github repository manager</h1>
+    <table border="1">
+        <thead>
+            <tr><th>Name</th><th>Protected</th></tr>
+        </thead>
+        <tbody>
+            {{ range .Repos }}
+            <tr>
+                <td>
+                    {{ .Name }}
+                </td>
+                <td>
+                    {{ .Protected }}
+                </td>
+            </tr>
+            {{ end }}
+        </tbody>
+    </table>
+  </body>
+</html>
