@@ -107,7 +107,7 @@ type Branch struct {
 }
 
 // GetAllRepos will return a list of repos for a Github Organization
-func getAllRepos(orgname string, webhookurl string) []repoStruct {
+func getAllRepos(orgname string, domain string) []repoStruct {
 	client := getClient()
 
 	var count int
@@ -144,7 +144,7 @@ func getAllRepos(orgname string, webhookurl string) []repoStruct {
 		rs := repoStruct{}
 		rs.Name = repo.Name
 		addProtectedDetails(&rs, orgname, repo)
-		addHooksDetails(&rs, orgname, repo, webhookurl)
+		addHooksDetails(&rs, orgname, repo, domain)
 		repos[i] = rs
 	}
 	return repos
@@ -183,18 +183,52 @@ func parseProtectionDetails(rs *repoStruct, response []byte) {
 		stringInSlice("build", s.Protection.RequiredStatusChecks.Contexts)
 }
 
-func addHooksDetails(rs *repoStruct, orgname string, repo github.Repository, webhookurl string) {
+func addHooksDetails(rs *repoStruct, orgname string, repo github.Repository, domain string) {
 	client := getClient()
 	hooks, _, err := client.Repositories.ListHooks(orgname, *repo.Name, nil)
 	check(err)
-	parseHookData(rs, hooks, webhookurl)
+	parseHookData(rs, hooks, domain)
 }
 
-func parseHookData(rs *repoStruct, hooks []github.Hook, webhookurl string) {
-	// for _, hook := range hooks {
-	// }
-	rs.CIHooks = false
+func parseHookData(rs *repoStruct, hooks []github.Hook, domain string) {
+	templatedUrl := "https://%s.%s/%s/"
+
+	prodPushWH := false
+	prodPRWH := false
+	for _, hook := range hooks {
+		url := hook.Config["url"]
+
+		genUrl := fmt.Sprintf(templatedUrl, "ci-proxy", domain, "github-webhook")
+		if url == genUrl {
+			prodPushWH = validWebhook(&hook, []string{"push"})
+		}
+
+		genUrl = fmt.Sprintf(templatedUrl, "ci-proxy", domain, "ghprbhook")
+		if url == genUrl {
+			prodPRWH = validWebhook(&hook, []string{"issue_comment", "pull_request"})
+		}
+	}
+	rs.CIHooks = prodPushWH && prodPRWH
 	rs.CITestHooks = false
+}
+
+func validWebhook(hook *github.Hook, events []string) bool {
+	ve := validEvents(hook, events)
+	ct := hook.Config["content_type"] == "form"
+	is := hook.Config["insecure_ssl"] == "0"
+	return ve && ct && is
+}
+
+func validEvents(hook *github.Hook, events []string) bool {
+	if len(hook.Events) != len(events) {
+		return false
+	}
+	for _, event := range events {
+		if !stringInSlice(event, hook.Events) {
+			return false
+		}
+	}
+	return true
 }
 
 func getClient() *github.Client {

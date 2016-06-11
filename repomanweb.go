@@ -12,7 +12,7 @@ import (
 type config struct {
 	githubkey    *string
 	organization *string
-	webhookurl   *string
+	domain       *string
 }
 
 var cfg config
@@ -27,7 +27,7 @@ func main() {
 }
 
 func showRepos(w http.ResponseWriter, r *http.Request) {
-	repos := getAllRepos(*cfg.organization, *cfg.webhookurl)
+	repos := getAllRepos(*cfg.organization, *cfg.domain)
 	data := map[string]interface{}{
 		"Repos": repos,
 	}
@@ -50,7 +50,7 @@ func handler(w http.ResponseWriter, r *http.Request) {
 
 	switch path {
 	case "api":
-		repos := getAllRepos(*cfg.organization, *cfg.webhookurl)
+		repos := getAllRepos(*cfg.organization, *cfg.domain)
 		w.Header().Set("Content-Type", "application/javascript")
 		json.NewEncoder(w).Encode(repos)
 	case "":
@@ -66,7 +66,7 @@ func getConfiguration() config {
 	config := config{}
 	config.organization = kingpin.Arg("org", "Github organization to analyze for upgrades").Required().String()
 	config.githubkey = kingpin.Arg("githubkey", "Api key for github.").Required().String()
-	config.webhookurl = kingpin.Arg("webhookurl", "URL to use when dealing with web hooks.").Required().String()
+	config.domain = kingpin.Arg("domain", "Domain to use when dealing with web hooks.").Required().String()
 	kingpin.Version("1.0.0")
 	kingpin.CommandLine.VersionFlag.Short('v')
 	kingpin.CommandLine.HelpFlag.Short('?')

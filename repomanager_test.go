@@ -39,7 +39,7 @@ func TestParseProtectionDetails(t *testing.T) {
 	assert.Equal(t, false, rs.ProtectedWithStatusCheck)
 }
 
-func TestParsePrtectionDetailsProtectedWithStatusCheck(t *testing.T) {
+func TestParseProtectionDetailsProtectedWithStatusCheck(t *testing.T) {
 	// protected is true, context is build, include admins
 	prot :=
 		`"protection": {
@@ -73,7 +73,7 @@ func TestParsePrtectionDetailsNotProtected(t *testing.T) {
 	assert.Equal(t, false, rs.ProtectedWithStatusCheck)
 }
 
-func TestParsePrtectionDetailsNoAdmins(t *testing.T) {
+func TestParseProtectionDetailsNoAdmins(t *testing.T) {
 	// not include admins
 	prot :=
 		`"protection": {
@@ -99,7 +99,7 @@ func TestParseHooksEmpty(t *testing.T) {
 }
 
 func TestParseHooksCI(t *testing.T) {
-	url := "https://%s.test.com/"
+	url := "test.com"
 	rs := repoStruct{}
 	hooks := []github.Hook{
 		*getProdPushWH(),
